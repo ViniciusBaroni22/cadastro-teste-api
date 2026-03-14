@@ -5,7 +5,7 @@ WORKDIR /app
 # Copia tudo da pasta katsu_fit_backend
 COPY katsu_fit_backend/ .
 
-RUN gradle buildFatJar --no-daemon
+RUN gradle shadowJar --no-daemon
 
 # Run stage
 FROM eclipse-temurin:17-jre-alpine
