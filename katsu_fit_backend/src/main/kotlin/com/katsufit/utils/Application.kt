@@ -86,43 +86,26 @@ fun main() {
     //     password = "PatyFoxPng"
     // )
 
+      // ========================================
+    // CONEXÃO COM BANCO DE DADOS (Render + Local)
     // ========================================
-    // CONEXÃO COM BANCO DE DADOS (NOVA - Render + Local)
-    // ========================================
-    val databaseUrlEnv = System.getenv("DATABASE_URL")
-    val dbUrl: String
-    val dbUser: String
-    val dbPassword: String
-
-    if (databaseUrlEnv != null) {
-        // Render: postgresql://user:password@host:port/database
-        val regex = Regex("postgresql://([^:]+):([^@]+)@([^/]+)/(.+)")
-        val matchResult = regex.find(databaseUrlEnv)
-        
-        if (matchResult != null) {
-            val (user, pass, hostPort, database) = matchResult.destructured
-            dbUrl = "jdbc:postgresql://$hostPort/$database"
-            dbUser = user
-            dbPassword = pass
-        } else {
-            // Fallback se não conseguir parsear
-            dbUrl = databaseUrlEnv.replace("postgresql://", "jdbc:postgresql://")
-            dbUser = System.getenv("DB_USER") ?: "postgres"
-            dbPassword = System.getenv("DB_PASSWORD") ?: "PatyFoxPng"
-        }
+    val databaseUrl = System.getenv("DATABASE_URL")
+    
+    if (databaseUrl != null) {
+        // Render - usa URL completa direto
+        Database.connect(
+            url = databaseUrl.replace("postgresql://", "jdbc:postgresql://"),
+            driver = "org.postgresql.Driver"
+        )
     } else {
-        // Localhost (desenvolvimento)
-        dbUrl = "jdbc:postgresql://localhost:5432/katsu_fit"
-        dbUser = "postgres"
-        dbPassword = "PatyFoxPng"
+        // Localhost
+        Database.connect(
+            url = "jdbc:postgresql://localhost:5432/katsu_fit",
+            driver = "org.postgresql.Driver",
+            user = "postgres",
+            password = "PatyFoxPng"
+        )
     }
-
-    Database.connect(
-        url = dbUrl,
-        driver = "org.postgresql.Driver",
-        user = dbUser,
-        password = dbPassword
-    )
 
     embeddedServer(Netty, port = System.getenv("PORT")?.toInt() ?: 8080, host = "0.0.0.0") {
         install(ContentNegotiation) {
