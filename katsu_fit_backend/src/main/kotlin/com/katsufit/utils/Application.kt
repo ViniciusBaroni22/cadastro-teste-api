@@ -6,9 +6,6 @@ import com.katsufit.models.personal.*
 import com.katsufit.models.personal.workout.*
 import com.katsufit.models.personal.exercise.*
 
-
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 // ========================================
 // ROTAS SHARED (Compartilhadas entre módulos)
 // ========================================
@@ -80,40 +77,22 @@ fun main() {
     val jwtAudience = "audiencia"
 
     // ========================================
-    // CONEXÃO COM BANCO DE DADOS (ANTIGA - Localhost)
-    // ========================================
-    // Database.connect(
-    //     url = "jdbc:postgresql://localhost:5432/katsu_fit",
-    //     driver = "org.postgresql.Driver",
-    //     user = "postgres",
-    //     password = "PatyFoxPng"
-    // )
-
-       // ========================================
     // CONEXÃO COM BANCO DE DADOS (Render + Local)
     // ========================================
-    import com.zaxxer.hikari.HikariConfig
-    import com.zaxxer.hikari.HikariDataSource
+    val dbHost = System.getenv("DB_HOST") ?: "localhost"
+    val dbPort = System.getenv("DB_PORT") ?: "5432"
+    val dbName = System.getenv("DB_NAME") ?: "katsu_fit"
+    val dbUser = System.getenv("DB_USER") ?: "postgres"
+    val dbPassword = System.getenv("DB_PASSWORD") ?: "PatyFoxPng"
     
-    val databaseUrl = System.getenv("DATABASE_URL")
+    val jdbcUrl = "jdbc:postgresql://$dbHost:$dbPort/$dbName"
     
-    if (databaseUrl != null) {
-        // Render - usar HikariCP (mais robusto)
-        val config = HikariConfig().apply {
-            jdbcUrl = databaseUrl.replace("postgresql://", "jdbc:postgresql://")
-            driverClassName = "org.postgresql.Driver"
-            maximumPoolSize = 3
-        }
-        Database.connect(HikariDataSource(config))
-    } else {
-        // Localhost
-        Database.connect(
-            url = "jdbc:postgresql://localhost:5432/katsu_fit",
-            driver = "org.postgresql.Driver",
-            user = "postgres",
-            password = "PatyFoxPng"
-        )
-    }
+    Database.connect(
+        url = jdbcUrl,
+        driver = "org.postgresql.Driver",
+        user = dbUser,
+        password = dbPassword
+    )
 
     embeddedServer(Netty, port = System.getenv("PORT")?.toInt() ?: 8080, host = "0.0.0.0") {
         install(ContentNegotiation) {
