@@ -6,6 +6,9 @@ import com.katsufit.models.personal.*
 import com.katsufit.models.personal.workout.*
 import com.katsufit.models.personal.exercise.*
 
+
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 // ========================================
 // ROTAS SHARED (Compartilhadas entre módulos)
 // ========================================
@@ -86,17 +89,22 @@ fun main() {
     //     password = "PatyFoxPng"
     // )
 
-      // ========================================
+       // ========================================
     // CONEXÃO COM BANCO DE DADOS (Render + Local)
     // ========================================
+    import com.zaxxer.hikari.HikariConfig
+    import com.zaxxer.hikari.HikariDataSource
+    
     val databaseUrl = System.getenv("DATABASE_URL")
     
     if (databaseUrl != null) {
-        // Render - usa URL completa direto
-        Database.connect(
-            url = databaseUrl.replace("postgresql://", "jdbc:postgresql://"),
-            driver = "org.postgresql.Driver"
-        )
+        // Render - usar HikariCP (mais robusto)
+        val config = HikariConfig().apply {
+            jdbcUrl = databaseUrl.replace("postgresql://", "jdbc:postgresql://")
+            driverClassName = "org.postgresql.Driver"
+            maximumPoolSize = 3
+        }
+        Database.connect(HikariDataSource(config))
     } else {
         // Localhost
         Database.connect(
