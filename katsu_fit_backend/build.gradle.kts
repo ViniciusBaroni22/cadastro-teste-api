@@ -142,3 +142,10 @@ tasks.shadowJar {
     }
     archiveFileName.set("app.jar")
 }
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "21"
+        freeCompilerArgs += "-Xsuppress-warnings"
+    }
+}
