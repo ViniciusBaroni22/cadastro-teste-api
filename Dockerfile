@@ -1,7 +1,10 @@
 # Build stage
 FROM gradle:8.5-jdk17 AS build
 WORKDIR /app
-COPY . .
+
+# Copia tudo da pasta katsu_fit_backend
+COPY katsu_fit_backend/ .
+
 RUN gradle buildFatJar --no-daemon
 
 # Run stage
