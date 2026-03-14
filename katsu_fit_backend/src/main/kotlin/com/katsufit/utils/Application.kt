@@ -159,13 +159,8 @@ fun main() {
         }
 
         // Criar as tabelas no banco de dados e aplicar workaround
+               // Criar as tabelas no banco de dados
         transaction {
-            try {
-                exec("UPDATE users SET name = 'Sem Nome' WHERE name IS NULL")
-            } catch (e: Exception) {
-                // Ignore se a tabela ainda não existir na primeira rodada
-            }
-
             SchemaUtils.createMissingTablesAndColumns(
                 Users, 
                 ProfessionalProfiles, 
@@ -193,19 +188,25 @@ fun main() {
                 UserSettingsTable,
                 SupportTickets,
                 BlacklistedTokens,
-                // Personal Trainer Tables
                 Professionals,
                 ProfessionalStudents,
                 PersonalCreditTransactions,
-                // Personal Trainer Workout Tables
                 WorkoutModules,
                 WorkoutModuleExercises,
                 StudentWorkouts,
                 StudentWorkoutExercises,
-                // Exercise Library Tables
                 DefaultExercises,
                 CustomExercises
             )
+        }
+        
+        // Workaround em transação separada (se falhar, não quebra nada)
+        transaction {
+            try {
+                exec("UPDATE users SET name = 'Sem Nome' WHERE name IS NULL")
+            } catch (e: Exception) {
+                // Ignore
+            }
         }
 
         // ========================================
