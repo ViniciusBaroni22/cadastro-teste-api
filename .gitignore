@@ -1,0 +1,29 @@
+# Kotlin
+*.class
+*.jar
+*.war
+*.ear
+build/
+.gradle/
+out/
+*.iml
+.idea/
+.kotlin/
+
+# Local config
+local.properties
+application.conf
+*.local.conf
+
+# Database
+*.db
+*.sqlite
+*.h2.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
