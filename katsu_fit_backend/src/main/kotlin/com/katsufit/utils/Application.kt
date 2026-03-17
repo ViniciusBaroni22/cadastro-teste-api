@@ -47,6 +47,7 @@ import com.katsufit.models.appointment.ProfessionalAvailabilities
 import com.katsufit.seeds.AnamnesisSeeds
 import com.katsufit.seeds.ExerciseSeeds
 import com.katsufit.seeds.ProfessionalSeeds
+import com.katsufit.seeds.FoodSeeds
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
@@ -215,6 +216,7 @@ fun main() {
         AnamnesisSeeds.seedDefaultTemplates()
         ExerciseSeeds.seedDefaultExercises()
         ProfessionalSeeds.seedDefaultProfessional()
+        FoodSeeds.seedDefaultFoods()
 
         routing {
             // ========================================
