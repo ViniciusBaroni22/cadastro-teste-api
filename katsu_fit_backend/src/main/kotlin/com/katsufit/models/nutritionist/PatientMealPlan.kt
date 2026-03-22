@@ -37,6 +37,7 @@ object PatientMealPlans : Table("patient_meal_plans") {
 object PatientMealPlanMeals : Table("patient_meal_plan_meals") {
     val id = integer("id").autoIncrement()
     val patientPlanId = integer("patient_plan_id").references(PatientMealPlans.id)
+    val dayOfWeek = integer("day_of_week").default(1) // 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sab, 7=Dom
     val name = varchar("name", 100)
     val time = varchar("time", 10).nullable()
     val orderIndex = integer("order_index").default(0)
@@ -81,6 +82,7 @@ data class PatientMealPlanDTO(
 data class PatientMealPlanMealDTO(
     val id: Int? = null,
     val patientPlanId: Int? = null,
+    val dayOfWeek: Int = 1,
     val name: String,
     val time: String? = null,
     val orderIndex: Int = 0,
@@ -96,7 +98,8 @@ data class PatientMealPlanMealDTO(
 
 @Serializable
 data class AssignMealPlanRequest(
-    val templateId: Int
+    val templateId: Int,
+    val days: List<Int> = listOf(1, 2, 3, 4, 5, 6, 7) // padrão: todos os dias
 )
 
 @Serializable

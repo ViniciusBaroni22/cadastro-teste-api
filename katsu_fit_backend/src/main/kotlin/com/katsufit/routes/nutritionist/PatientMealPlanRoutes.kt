@@ -72,23 +72,26 @@ fun Route.patientMealPlanRouting() {
                         it[isActive] = true
                     }[PatientMealPlans.id]
 
-                    // 4. Copiar todas as refeições do template
+                    // 4. Copiar todas as refeições do template PARA CADA DIA especificado
                     val templateMeals = MealPlanMeals.select {
                         MealPlanMeals.templateId eq request.templateId
                     }.orderBy(MealPlanMeals.orderIndex, SortOrder.ASC)
 
-                    for (meal in templateMeals) {
-                        PatientMealPlanMeals.insert {
-                            it[patientPlanId] = newPlanId
-                            it[name] = meal[MealPlanMeals.name]
-                            it[time] = meal[MealPlanMeals.time]
-                            it[orderIndex] = meal[MealPlanMeals.orderIndex]
-                            it[foods] = meal[MealPlanMeals.foods]
-                            it[totalCalories] = meal[MealPlanMeals.totalCalories]
-                            it[totalProtein] = meal[MealPlanMeals.totalProtein]
-                            it[totalCarbs] = meal[MealPlanMeals.totalCarbs]
-                            it[totalFat] = meal[MealPlanMeals.totalFat]
-                            it[totalFiber] = meal[MealPlanMeals.totalFiber]
+                    for (day in request.days) {
+                        for (meal in templateMeals) {
+                            PatientMealPlanMeals.insert {
+                                it[patientPlanId] = newPlanId
+                                it[dayOfWeek] = day
+                                it[name] = meal[MealPlanMeals.name]
+                                it[time] = meal[MealPlanMeals.time]
+                                it[orderIndex] = meal[MealPlanMeals.orderIndex]
+                                it[foods] = meal[MealPlanMeals.foods]
+                                it[totalCalories] = meal[MealPlanMeals.totalCalories]
+                                it[totalProtein] = meal[MealPlanMeals.totalProtein]
+                                it[totalCarbs] = meal[MealPlanMeals.totalCarbs]
+                                it[totalFat] = meal[MealPlanMeals.totalFat]
+                                it[totalFiber] = meal[MealPlanMeals.totalFiber]
+                            }
                         }
                     }
 
@@ -150,6 +153,7 @@ fun Route.patientMealPlanRouting() {
                         PatientMealPlanMealDTO(
                             id = mealRow[PatientMealPlanMeals.id],
                             patientPlanId = mealRow[PatientMealPlanMeals.patientPlanId],
+                            dayOfWeek = mealRow[PatientMealPlanMeals.dayOfWeek],
                             name = mealRow[PatientMealPlanMeals.name],
                             time = mealRow[PatientMealPlanMeals.time],
                             orderIndex = mealRow[PatientMealPlanMeals.orderIndex],
