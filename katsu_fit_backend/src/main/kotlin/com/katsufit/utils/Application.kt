@@ -29,6 +29,7 @@ import com.katsufit.routes.nutritionist.nutritionPlanRouting
 import com.katsufit.routes.nutritionist.nutritionistRouting
 import com.katsufit.routes.nutritionist.foodRouting
 import com.katsufit.routes.nutritionist.mealPlanRouting
+import com.katsufit.routes.nutritionist.patientMealPlanRouting
 import com.katsufit.routes.nutritionist.anamnesisRoutes
 import com.katsufit.routes.nutritionist.documentRouting
 
@@ -197,7 +198,9 @@ fun main() {
                 StudentWorkouts,
                 StudentWorkoutExercises,
                 DefaultExercises,
-                CustomExercises
+                CustomExercises,
+                PatientMealPlans,
+                PatientMealPlanMeals
             )
         }
         
@@ -232,6 +235,7 @@ fun main() {
             nutritionistRouting()
             foodRouting()
             mealPlanRouting()
+            patientMealPlanRouting()
             anamnesisRoutes()
             documentRouting()
             walletRouting()
