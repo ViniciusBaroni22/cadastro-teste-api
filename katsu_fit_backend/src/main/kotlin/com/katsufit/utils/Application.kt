@@ -32,6 +32,7 @@ import com.katsufit.routes.nutritionist.mealPlanRouting
 import com.katsufit.routes.nutritionist.patientMealPlanRouting
 import com.katsufit.routes.nutritionist.anamnesisRoutes
 import com.katsufit.routes.nutritionist.documentRouting
+import com.katsufit.routes.nutritionist.patientAppointmentRouting
 
 // ========================================
 // ROTAS PERSONAL (Específicas do Personal Trainer)
@@ -171,6 +172,8 @@ fun main() {
                 Messages, 
                 ProgressEntries,
                 NutritionistPatientLinks,
+                PatientRecords,
+                PatientAppointments,
                 Foods,
                 MealPlanTemplates,
                 MealPlanMeals,
@@ -238,6 +241,7 @@ fun main() {
             patientMealPlanRouting()
             anamnesisRoutes()
             documentRouting()
+            patientAppointmentRouting()
             walletRouting()
             couponRoutes()
             growthRoutes()

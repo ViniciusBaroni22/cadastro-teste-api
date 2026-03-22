@@ -53,6 +53,8 @@ fun Route.progressRouting() {
                             it[ProgressEntries.waist] = req.waist
                             it[ProgressEntries.chest] = req.chest
                             it[ProgressEntries.hips] = req.hips
+                            it[ProgressEntries.height] = req.height
+                            it[ProgressEntries.bodyFatPercentage] = req.bodyFatPercentage
                             it[ProgressEntries.notes] = req.notes
                         }.value
                     }
@@ -68,6 +70,8 @@ fun Route.progressRouting() {
                                     waist = it[ProgressEntries.waist],
                                     chest = it[ProgressEntries.chest],
                                     hips = it[ProgressEntries.hips],
+                                    height = it[ProgressEntries.height],
+                                    bodyFatPercentage = it[ProgressEntries.bodyFatPercentage],
                                     notes = it[ProgressEntries.notes],
                                     entryAt = it[ProgressEntries.entryAt].toString()
                                 )
@@ -114,6 +118,8 @@ fun Route.progressRouting() {
                                         waist = it[ProgressEntries.waist],
                                         chest = it[ProgressEntries.chest],
                                         hips = it[ProgressEntries.hips],
+                                        height = it[ProgressEntries.height],
+                                        bodyFatPercentage = it[ProgressEntries.bodyFatPercentage],
                                         notes = it[ProgressEntries.notes],
                                         entryAt = it[ProgressEntries.entryAt].toString()
                                     )
@@ -151,6 +157,8 @@ fun Route.progressRouting() {
                                         waist = it[ProgressEntries.waist],
                                         chest = it[ProgressEntries.chest],
                                         hips = it[ProgressEntries.hips],
+                                        height = it[ProgressEntries.height],
+                                        bodyFatPercentage = it[ProgressEntries.bodyFatPercentage],
                                         notes = it[ProgressEntries.notes],
                                         entryAt = it[ProgressEntries.entryAt].toString()
                                     )
