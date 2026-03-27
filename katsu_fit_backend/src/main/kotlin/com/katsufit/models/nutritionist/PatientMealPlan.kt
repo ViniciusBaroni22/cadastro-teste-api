@@ -107,3 +107,11 @@ data class AssignMealPlanResponse(
     val id: Int,
     val message: String
 )
+
+@Serializable
+data class AddPatientMealRequest(
+    val dayOfWeek: Int,          // 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sab, 7=Dom
+    val name: String,            // Nome da refeição (ex: "Café da Manhã")
+    val time: String? = null,    // Horário (ex: "08:00")
+    val foods: List<MealFoodItem>? = null  // Alimentos (opcional na criação)
+)
