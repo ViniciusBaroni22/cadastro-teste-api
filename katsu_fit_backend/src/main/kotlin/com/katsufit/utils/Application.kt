@@ -5,6 +5,7 @@ import com.katsufit.models.nutritionist.*
 import com.katsufit.models.personal.*
 import com.katsufit.models.personal.workout.*
 import com.katsufit.models.personal.exercise.*
+import com.katsufit.models.client.*
 
 // ========================================
 // ROTAS SHARED (Compartilhadas entre módulos)
@@ -21,6 +22,9 @@ import com.katsufit.routes.shared.growthRoutes
 import com.katsufit.routes.shared.settingsRoutes
 import com.katsufit.routes.shared.supportRoutes
 import com.katsufit.routes.shared.authRoutes
+import com.katsufit.routes.client.clientRoutes
+import com.katsufit.routes.client.clientLinkRoutes
+import com.katsufit.routes.client.clientMealRoutes
 
 // ========================================
 // ROTAS NUTRITIONIST (Específicas do Nutricionista)
@@ -201,7 +205,10 @@ fun main() {
                 DefaultExercises,
                 CustomExercises,
                 PatientMealPlans,
-                PatientMealPlanMeals
+                PatientMealPlanMeals,
+                // Novas tabelas para Clientes
+                ClientProfessionalLinks,
+                ClientMealAccess
             )
         }
         
@@ -253,6 +260,11 @@ fun main() {
             studentRoutes()
             appointmentRoutes()
             exerciseRoutes()
+            
+            // Client Routes (novo)
+            clientRoutes()
+            clientLinkRoutes()
+            clientMealRoutes()
 
             authenticate("auth-jwt") {
                 professionalProfileRouting()
