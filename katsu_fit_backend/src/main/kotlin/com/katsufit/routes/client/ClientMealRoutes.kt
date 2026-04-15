@@ -10,7 +10,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.builtins.ListSerializer
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
@@ -99,7 +99,7 @@ fun Route.clientMealRoutes() {
                             // Parsear JSON dos alimentos
                             val foodsJson = mealRow[PatientMealPlanMeals.foods]
                             val foods: List<MealFoodItem> = try {
-                                Json.decodeFromString(foodsJson)
+                                Json.decodeFromString(ListSerializer(MealFoodItem.serializer()), foodsJson)
                             } catch (e: Exception) {
                                 emptyList()
                             }
@@ -191,7 +191,7 @@ fun Route.clientMealRoutes() {
                         .map { mealRow ->
                             val foodsJson = mealRow[PatientMealPlanMeals.foods]
                             val foods: List<MealFoodItem> = try {
-                                Json.decodeFromString(foodsJson)
+                                Json.decodeFromString(ListSerializer(MealFoodItem.serializer()), foodsJson)
                             } catch (e: Exception) {
                                 emptyList()
                             }

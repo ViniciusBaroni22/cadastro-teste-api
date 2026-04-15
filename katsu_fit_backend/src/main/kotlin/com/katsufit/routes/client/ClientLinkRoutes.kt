@@ -11,6 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
@@ -136,7 +137,7 @@ fun Route.clientLinkRoutes() {
                         (ClientProfessionalLinks.status eq "PENDING")
                     }) {
                         it[status] = "REJECTED"
-                        it[updatedAt] = CurrentTimestamp
+                        it[updatedAt] = Clock.System.now()
                     }
                 }
                 
@@ -231,8 +232,8 @@ fun Route.clientLinkRoutes() {
                         (ClientProfessionalLinks.status eq "PENDING")
                     }) {
                         it[status] = "ACCEPTED"
-                        it[linkedAt] = CurrentTimestamp
-                        it[updatedAt] = CurrentTimestamp
+                        it[linkedAt] = Clock.System.now()
+                        it[updatedAt] = Clock.System.now()
                     }
                 }
                 
@@ -263,7 +264,7 @@ fun Route.clientLinkRoutes() {
                         (ClientProfessionalLinks.status eq "PENDING")
                     }) {
                         it[status] = "REJECTED"
-                        it[updatedAt] = CurrentTimestamp
+                        it[updatedAt] = Clock.System.now()
                     }
                 }
                 
@@ -296,12 +297,12 @@ fun Route.clientLinkRoutes() {
                         existing[Users.id].value
                     } else {
                         // Criar usuário cliente
-                        Users.insert {
+                        (Users.insert {
                             it[email] = request.clientEmail
                             it[passwordHash] = "" // Cliente define senha no primeiro login
                             it[userType] = "CLIENT"
                             it[name] = "Novo Cliente"
-                        } get Users.id
+                        } get Users.id).value
                     }
                 }
                 
