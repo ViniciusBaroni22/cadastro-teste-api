@@ -12,8 +12,8 @@ import com.katsufit.models.shared.Users
  * Cliente solicita, Profissional aceita/recusa
  */
 object ClientProfessionalLinks : UUIDTable("client_professional_links") {
-    val clientId = reference("client_id", Users, onDelete = ReferenceOption.CASCADE)
-    val professionalId = reference("professional_id", Users, onDelete = ReferenceOption.CASCADE)
+    val clientId = reference("client_id", Users.id, onDelete = ReferenceOption.CASCADE)
+    val professionalId = reference("professional_id", Users.id, onDelete = ReferenceOption.CASCADE)
     val professionalType = varchar("professional_type", 20) // NUTRITIONIST ou PERSONAL
     val invitedBy = varchar("invited_by", 20) // CLIENT ou PROFESSIONAL
     val status = varchar("status", 20).default("PENDING") // PENDING, ACCEPTED, REJECTED, BLOCKED

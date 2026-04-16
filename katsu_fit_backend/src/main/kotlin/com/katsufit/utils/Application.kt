@@ -99,6 +99,21 @@ fun main() {
         user = dbUser,
         password = dbPassword
     )
+    
+    // ========================================
+    // RODAR MIGRATIONS DO FLYWAY
+    // ========================================
+    try {
+        val flyway = org.flywaydb.core.Flyway.configure()
+            .dataSource(jdbcUrl, dbUser, dbPassword)
+            .locations("classpath:db/migration")
+            .load()
+        flyway.migrate()
+        println("✅ Migrations aplicadas com sucesso!")
+    } catch (e: Exception) {
+        println("⚠️ Erro ao rodar migrations: ${e.message}")
+        // Não quebra o app se der erro nas migrations
+    }
 
     embeddedServer(Netty, port = System.getenv("PORT")?.toInt() ?: 8080, host = "0.0.0.0") {
         install(ContentNegotiation) {
