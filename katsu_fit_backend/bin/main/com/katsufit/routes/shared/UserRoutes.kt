@@ -55,16 +55,23 @@ fun Route.userRouting(jwtSecret: String, jwtIssuer: String, jwtAudience: String)
                 if (userFromDb != null && BCrypt.checkpw(userRequest.password, userFromDb[Users.passwordHash])) {
                     val userId = userFromDb[Users.id].toString()
                     val userName = userFromDb[Users.name]
+                    val userType = userFromDb[Users.userType]
                     
                     val token = JWT.create()
                         .withAudience(jwtAudience)
                         .withIssuer(jwtIssuer)
                         .withClaim("email", userFromDb[Users.email])
                         .withClaim("id", userId)
+                        .withClaim("userType", userType) // IMPORTANTE: Para frontend saber qual dashboard abrir
                         .withExpiresAt(Date(System.currentTimeMillis() + 3600000))
                         .sign(Algorithm.HMAC256(jwtSecret))
 
-                    call.respond(hashMapOf("token" to token, "name" to userName))
+                    call.respond(hashMapOf(
+                        "token" to token, 
+                        "name" to userName,
+                        "userType" to userType,
+                        "id" to userId
+                    ))
                 } else {
                     call.respondText("Credenciais inválidas", status = HttpStatusCode.Unauthorized)
                 }

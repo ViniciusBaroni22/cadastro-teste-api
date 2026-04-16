@@ -16,6 +16,8 @@ object ProgressEntries : UUIDTable("progress_entries") {
     val waist = double("waist").nullable()
     val chest = double("chest").nullable()
     val hips = double("hips").nullable()
+    val height = double("height").nullable()
+    val bodyFatPercentage = double("body_fat_percentage").nullable()
     val notes = text("notes").nullable()
     val entryAt = timestamp("entry_at").defaultExpression(CurrentTimestamp)
 }
@@ -27,6 +29,8 @@ data class ProgressRequest(
     val waist: Double? = null,
     val chest: Double? = null,
     val hips: Double? = null,
+    val height: Double? = null,
+    val bodyFatPercentage: Double? = null,
     val notes: String? = null
 )
 
@@ -39,6 +43,8 @@ data class ProgressResponse(
     val waist: Double? = null,
     val chest: Double? = null,
     val hips: Double? = null,
+    val height: Double? = null,
+    val bodyFatPercentage: Double? = null,
     val notes: String? = null,
     val entryAt: String
 )

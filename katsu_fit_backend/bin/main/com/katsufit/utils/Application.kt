@@ -5,6 +5,7 @@ import com.katsufit.models.nutritionist.*
 import com.katsufit.models.personal.*
 import com.katsufit.models.personal.workout.*
 import com.katsufit.models.personal.exercise.*
+import com.katsufit.models.client.*
 
 // ========================================
 // ROTAS SHARED (Compartilhadas entre módulos)
@@ -21,6 +22,9 @@ import com.katsufit.routes.shared.growthRoutes
 import com.katsufit.routes.shared.settingsRoutes
 import com.katsufit.routes.shared.supportRoutes
 import com.katsufit.routes.shared.authRoutes
+import com.katsufit.routes.client.clientRoutes
+import com.katsufit.routes.client.clientLinkRoutes
+import com.katsufit.routes.client.clientMealRoutes
 
 // ========================================
 // ROTAS NUTRITIONIST (Específicas do Nutricionista)
@@ -29,6 +33,7 @@ import com.katsufit.routes.nutritionist.nutritionPlanRouting
 import com.katsufit.routes.nutritionist.nutritionistRouting
 import com.katsufit.routes.nutritionist.foodRouting
 import com.katsufit.routes.nutritionist.mealPlanRouting
+import com.katsufit.routes.nutritionist.patientMealPlanRouting
 import com.katsufit.routes.nutritionist.anamnesisRoutes
 import com.katsufit.routes.nutritionist.documentRouting
 
@@ -47,6 +52,7 @@ import com.katsufit.models.appointment.ProfessionalAvailabilities
 import com.katsufit.seeds.AnamnesisSeeds
 import com.katsufit.seeds.ExerciseSeeds
 import com.katsufit.seeds.ProfessionalSeeds
+import com.katsufit.seeds.FoodSeeds
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
@@ -72,18 +78,29 @@ import io.ktor.http.HttpMethod
 import java.io.File
 
 fun main() {
-    val jwtSecret = "minhachavesecreta123"
+    val jwtSecret = System.getenv("JWT_SECRET") ?: "minhachavesecreta123"
     val jwtIssuer = "emissor"
     val jwtAudience = "audiencia"
 
+    // ========================================
+    // CONEXÃO COM BANCO DE DADOS (Render + Local)
+    // ========================================
+    val dbHost = System.getenv("DB_HOST") ?: "localhost"
+    val dbPort = System.getenv("DB_PORT") ?: "5432"
+    val dbName = System.getenv("DB_NAME") ?: "katsu_fit"
+    val dbUser = System.getenv("DB_USER") ?: "postgres"
+    val dbPassword = System.getenv("DB_PASSWORD") ?: "PatyFoxPng"
+    
+    val jdbcUrl = "jdbc:postgresql://$dbHost:$dbPort/$dbName"
+    
     Database.connect(
-        url = "jdbc:postgresql://localhost:5432/katsu_fit",
+        url = jdbcUrl,
         driver = "org.postgresql.Driver",
-        user = "postgres",
-        password = "PatyFoxPng"
+        user = dbUser,
+        password = dbPassword
     )
 
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+    embeddedServer(Netty, port = System.getenv("PORT")?.toInt() ?: 8080, host = "0.0.0.0") {
         install(ContentNegotiation) {
             json()
         }
@@ -148,13 +165,8 @@ fun main() {
         }
 
         // Criar as tabelas no banco de dados e aplicar workaround
+               // Criar as tabelas no banco de dados
         transaction {
-            try {
-                exec("UPDATE users SET name = 'Sem Nome' WHERE name IS NULL")
-            } catch (e: Exception) {
-                // Ignore se a tabela ainda não existir na primeira rodada
-            }
-
             SchemaUtils.createMissingTablesAndColumns(
                 Users, 
                 ProfessionalProfiles, 
@@ -163,6 +175,7 @@ fun main() {
                 Messages, 
                 ProgressEntries,
                 NutritionistPatientLinks,
+                PatientRecords,
                 Foods,
                 MealPlanTemplates,
                 MealPlanMeals,
@@ -182,19 +195,30 @@ fun main() {
                 UserSettingsTable,
                 SupportTickets,
                 BlacklistedTokens,
-                // Personal Trainer Tables
                 Professionals,
                 ProfessionalStudents,
                 PersonalCreditTransactions,
-                // Personal Trainer Workout Tables
                 WorkoutModules,
                 WorkoutModuleExercises,
                 StudentWorkouts,
                 StudentWorkoutExercises,
-                // Exercise Library Tables
                 DefaultExercises,
-                CustomExercises
+                CustomExercises,
+                PatientMealPlans,
+                PatientMealPlanMeals,
+                // Novas tabelas para Clientes
+                ClientProfessionalLinks,
+                ClientMealAccess
             )
+        }
+        
+        // Workaround em transação separada (se falhar, não quebra nada)
+        transaction {
+            try {
+                exec("UPDATE users SET name = 'Sem Nome' WHERE name IS NULL")
+            } catch (e: Exception) {
+                // Ignore
+            }
         }
 
         // ========================================
@@ -203,6 +227,7 @@ fun main() {
         AnamnesisSeeds.seedDefaultTemplates()
         ExerciseSeeds.seedDefaultExercises()
         ProfessionalSeeds.seedDefaultProfessional()
+        FoodSeeds.seedDefaultFoods()
 
         routing {
             // ========================================
@@ -218,6 +243,7 @@ fun main() {
             nutritionistRouting()
             foodRouting()
             mealPlanRouting()
+            patientMealPlanRouting()
             anamnesisRoutes()
             documentRouting()
             walletRouting()
@@ -234,6 +260,11 @@ fun main() {
             studentRoutes()
             appointmentRoutes()
             exerciseRoutes()
+            
+            // Client Routes (novo)
+            clientRoutes()
+            clientLinkRoutes()
+            clientMealRoutes()
 
             authenticate("auth-jwt") {
                 professionalProfileRouting()
