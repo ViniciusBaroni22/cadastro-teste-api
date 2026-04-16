@@ -14,7 +14,7 @@ import com.katsufit.models.nutritionist.PatientMealPlans
  */
 object ClientMealAccess : UUIDTable("client_meal_access") {
     val clientId = reference("client_id", Users.id, onDelete = ReferenceOption.CASCADE)
-    val patientMealPlanId = reference("patient_meal_plan_id", PatientMealPlans.id, onDelete = ReferenceOption.CASCADE)
+    val patientMealPlanId = integer("patient_meal_plan_id").references(PatientMealPlans.id, onDelete = ReferenceOption.CASCADE)
     val nutritionistId = reference("nutritionist_id", Users.id, onDelete = ReferenceOption.CASCADE)
     val accessGrantedAt = timestamp("access_granted_at").defaultExpression(CurrentTimestamp)
     val validUntil = timestamp("valid_until").nullable()

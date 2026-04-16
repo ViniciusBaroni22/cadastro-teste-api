@@ -80,7 +80,7 @@ plugins {
     kotlin("jvm") version "1.9.23"
     application
     kotlin("plugin.serialization") version "1.9.23"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.0"
 }
 
 group = "com.katsufit"
@@ -107,6 +107,10 @@ dependencies {
     // Conexão com o Banco de Dados
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.zaxxer:HikariCP:5.1.0")
+    
+    // Migrations (Flyway)
+    implementation("org.flywaydb:flyway-core:10.12.0")
+    implementation("org.flywaydb:flyway-database-postgresql:10.12.0")
 
     // Lógica do Banco de Dados (Exposed)
     implementation("org.jetbrains.exposed:exposed-core:0.51.1")
