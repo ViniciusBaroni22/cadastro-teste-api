@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.and
+import com.katsufit.models.shared.ProfessionalListDTO
 import org.mindrot.jbcrypt.BCrypt
 import java.util.UUID
 import com.auth0.jwt.JWT
@@ -80,6 +81,36 @@ fun Route.userRouting(jwtSecret: String, jwtIssuer: String, jwtAudience: String)
             }
         }
 
+        // --- ROTA DE LISTAR PROFISSIONAIS POR TIPO ---
+        authenticate("auth-jwt") {
+            get("/professionals") {
+                try {
+                    val type = call.request.queryParameters["type"]
+                    
+                    if (type == null || (type != "NUTRITIONIST" && type != "PERSONAL")) {
+                        call.respond(HttpStatusCode.BadRequest, "Tipo inválido. Use NUTRITIONIST ou PERSONAL")
+                        return@get
+                    }
+                    
+                    val professionals = transaction {
+                        Users.select { Users.userType eq type }
+                            .orderBy(Users.name)
+                            .map { row ->
+                                ProfessionalListDTO(
+                                    id = row[Users.id].toString(),
+                                    name = row[Users.name],
+                                    email = row[Users.email]
+                                )
+                            }
+                    }
+                    
+                    call.respond(HttpStatusCode.OK, professionals)
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, "Erro ao buscar profissionais: ${e.message}")
+                }
+            }
+        }
+
         // --- ROTA DE VINCULAR PACIENTE (CORRIGIDA) ---
         authenticate("auth-jwt") {
             post("/patient/invite") {
@@ -106,8 +137,8 @@ fun Route.userRouting(jwtSecret: String, jwtIssuer: String, jwtAudience: String)
                             patientUuid = (Users.insert {
                                 it[email] = request.email
                                 it[passwordHash] = ""
-                                it[userType] = "client"
-                                it[name] = "Convidado"
+                                it[userType] = "CLIENT"
+                                it[name] = "Novo Cliente"
                             } get Users.id).value
                         }
 

@@ -245,7 +245,7 @@ fun Route.nutritionistRouting() {
                                 it[email] = request.email
                                 it[passwordHash] = ""
                                 it[name] = request.name
-                                it[userType] = "client"
+                                it[userType] = "CLIENT"
                             }
                             newUserId.toString()
                         }
